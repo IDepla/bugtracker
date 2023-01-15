@@ -1,6 +1,6 @@
 # goal
 
-Build a bug tracker
+Build a simple bug tracker
 
 # entities
 - bug
