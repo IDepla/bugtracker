@@ -1,4 +1,53 @@
 {% extends "base.html" %}
+{% load static humanize %}
+
+
 {% block main %}
-account
+<h3>Account {{ user.username }}</h3>
+
+{% if form %}
+<form method="post">
+    {% csrf_token %}
+{{ form }}
+<input type="submit" value="save"/>
+</form>
+{% else %}
+<span>{{ user.first_name }}</span> <span>{{ user.last_name }}</span>
+{% endif %}
+
+<div class="row p-3">
+
+    <div class="col">
+        <h5>Bugs Assigned</h5>
+        <div class="bugs">
+        {% for bug in assigned_bugs_list %}
+            <div class="row">
+                <span class="col-3">{{ bug.created_at|naturaltime }}</span> 
+                <a class="col" href="{% url 'bug-detail' bug.pk %}">{{ bug.title }}</a>  
+                <a class="col-2" href="{% url 'bug-close' bug.pk %}">close</a>
+            </div>
+        {% empty %}
+            <span> no bugs assigned</span>
+        {% endfor %}
+        </div>
+
+    </div>
+    <div class="col">
+        <h5>Bugs Created</h5>
+        <div class="bugs">
+        {% for bug in created_bugs_list %}
+            <div class="row">
+                <span class="col-3">{{ bug.created_at|naturaltime }}</span> 
+                <a class="col" href="{% url 'bug-detail' bug.pk %}">{{ bug.title }}</a>  
+                <a class="col-2" href="{% url 'bug-close' bug.pk %}">close</a>
+            </div>
+        {% empty %}
+            <span> no bugs created</span>
+        {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+
 {% endblock %}

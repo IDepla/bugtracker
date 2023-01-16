@@ -1,6 +1,9 @@
+from typing import List
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from typing import List
+from django.db.models import QuerySet
+
+# pylint: disable=no-member
 
 
 class UserManager(BaseUserManager):
@@ -51,6 +54,20 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+    @classmethod
+    def get_assigned_bug_list(cls, pk) -> QuerySet:
+        """get all assigned bugs"""
+        return cls.objects.filter(pk=pk).prefech_related("bugs_assigned").all()
+
+    @classmethod
+    def get_created_bug_list(cls, pk) -> QuerySet:
+        """get all created bugs from the user pk"""
+        return cls.objects.filter(pk=pk).bugs_created.all()
+
+    @classmethod
+    def get_complete(cls, pk) -> QuerySet:
+        return cls.objects.get(pk=pk)
+
 
 class Bug(models.Model):
     """Represents a bug"""
@@ -61,7 +78,7 @@ class Bug(models.Model):
         OPEN = "O", "Open"
         CLOSE = "C", "Closed"
 
-    title = models.TextField()
+    title = models.CharField(max_length=250)
 
     description = models.TextField()
 
@@ -81,10 +98,31 @@ class Bug(models.Model):
 
     closed_at = models.DateTimeField(null=True)
     closed_by = models.ForeignKey(
-        User, related_name="bugs_closed", on_delete=models.DO_NOTHING
+        User,
+        related_name="bugs_closed",
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
     )
 
     assigned_to = models.ManyToManyField(
         User,
         related_name="bugs_assigned",
     )
+
+    @classmethod
+    def get_all(cls) -> QuerySet:
+        """queryset get all bugs"""
+        return cls.objects.all()
+
+    @classmethod
+    def get_all_by_date_reverse(cls) -> QuerySet:
+        """queryset get all using creation date in reverse order"""
+
+        return cls.objects.all().order_by("-created_at")
+
+    @classmethod
+    def get_open_bugs_by_date_reverse(cls) -> QuerySet:
+        """queryset get all using creation date in reverse order"""
+
+        return cls.objects.filter(status=Bug.BugStatus.OPEN).order_by("-created_at")

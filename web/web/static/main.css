@@ -1,1 +1,45 @@
-.error {color:rgb(255, 0, 85)}
+.error {
+    color: rgb(255, 0, 85)
+}
+
+
+.C {
+    text-decoration: line-through;
+}
+
+.bugs {
+    margin: 10px;
+}
+
+.bugs div.row {
+    padding: 10px;
+    background-color: rgb(218, 218, 218);
+}
+.bugs div.row a {
+    display:block;
+}
+.bugs .row:nth-child(1) {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.bugs .row:nth-child(2n+1) {
+    background-color: rgb(218, 218, 218);
+}
+
+.bugs .row:nth-child(2n) {
+    background-color: white;
+}
+
+.bugs .row:last-child {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.bugs div {
+    text-align: center;
+}
+
+.bug-form{
+    
+}

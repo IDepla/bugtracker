@@ -18,13 +18,22 @@ from django.urls import path
 from api.urls import urlpatterns as api_urlpatterns
 from django.contrib.auth.views import LoginView, LogoutView
 
-from .views import Landingpage, OpenBugs, BugDetail, AccountPage
+from .views import (
+    Landingpage,
+    OpenBugs,
+    BugDetail,
+    AccountPage,
+    CreateBug,
+    CloseBug,
+)
 
-urlpatterns = api_urlpatterns+[
+urlpatterns = api_urlpatterns + [
     path("admin/", admin.site.urls),
     path("open/", OpenBugs.as_view(), name="open-bugs"),
-    path("bug/<id>/", BugDetail.as_view(), name="bug-detail"),
-    path("account/", AccountPage.as_view(), name="account-page"),
+    path("bug/create/", CreateBug.as_view(), name="bug-create"),
+    path("bug/<int:pk>/", BugDetail.as_view(), name="bug-detail"),
+    path("bug/<int:pk>/close/", CloseBug.as_view(), name="bug-close"),
+    path("account/<int:pk>/", AccountPage.as_view(), name="account-detail"),
     path(
         "account/login/",
         LoginView.as_view(template_name="web/landing.html"),

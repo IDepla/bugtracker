@@ -1,5 +1,27 @@
 {% extends "base.html" %}
-{% block main %}
-bug detail
 
+{% load static humanize %}
+
+{% block main %}
+
+<div class="container">
+    <h3>Bug #{{ bug.pk }} ({{ bug.get_status_display }})</h3>
+    <div class="row">
+        <div class="col-6"> open since {{ bug.created_at }}, by <a href="{% url 'account-detail' bug.created_by.pk %}">{{ bug.created_by }}</a></div>
+        {% if bug.status == 'C' %}
+        <div class="col-6"> closed at {{ bug.closed_at }}, by <a href="{% url 'account-detail' bug.closed_by.pk %}">{{ bug.closed_by }}</a> </div>
+        {% else %}
+        <div class="col-6">
+        <a  href="{% url 'bug-close' bug.pk %}">close</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <form class="bug-form" method="post">
+        {% csrf_token %}
+        {{ form.as_div }}
+    <input type="submit" value="update"/>
+    </form>
+
+</div>
 {% endblock %}

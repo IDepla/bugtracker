@@ -1,5 +1,40 @@
 {% extends "base.html" %}
-{% block main %}
-bug list
+{% load static humanize %}
 
-{% endblock %}
+
+{% block content %}
+<div class="row justify-content-between p-2"> 
+    <div class="col-5">
+    {% include 'web/components/paginator.html' %}
+    </div>
+    <a type="button" class="col-1 btn btn-light" href="{% url 'bug-create' %}">create</a>
+</div>
+
+<div class="container bugs">
+    <div class="row">
+        <div class="col-1 ">status</div>
+        <div class="col-5 text-break">title</div>
+        <div class="col-2 text-break">date</div>
+        <div class="col-2 text-break">created by</div>
+        <div class="col-2 text-break">assigned to</div>
+    </div>
+    {% for bug in page_obj %}
+
+    <div class="row {{ bug.status }}">
+        <div class="col-1 {{ bug.status }}"><a href="{% url 'bug-detail' bug.pk %}">{{ bug.get_status_display }}</a></div>
+        <div class="col-5 text-break">{{ bug.title }}</div>
+        <div class="col-2 text-break">{{ bug.created_at|naturaltime}}</div>
+        <div class="col-2 text-break"><a href="{% url 'account-detail' bug.created_by.pk %}">{{ bug.created_by|truncatechars:15 }}</a></div>
+        <div class="col-2 text-break">{% for assigned in bug.assigned_to.all %}
+            <a href="{% url 'account-detail' assigned.pk %}">{{ assigned|truncatechars:15 }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% empty %}
+        <div class="list-group-item">no bugs so far</div>
+    {% endfor %}
+</div>
+
+{% include 'web/components/paginator.html' %}
+{% endblock content %}

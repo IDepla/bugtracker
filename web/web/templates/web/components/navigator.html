@@ -8,10 +8,10 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url 'open-bugs' %}">open</a>
+            <a class="nav-link active" aria-current="page" href="{% url 'open-bugs' %}">open bugs</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'account-page' %}">account</a>
+            <a class="nav-link" href="{% url 'account-detail' user.pk %}">account</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'swagger-ui' %}" target="_blank">API</a>
