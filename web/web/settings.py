@@ -16,18 +16,25 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.environ["DJANGO_APPLICATION_DEBUG"] == "True" or True
+if "DJANGO_APPLICATION_DEBUG" in os.environ:
+
+    DEBUG = os.environ["DJANGO_APPLICATION_DEBUG"] == "True" or True
+else:
+    DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-if os.environ["DJANGO_SECRET_KEY"]:
+if "DJANGO_SECRET_KEY" in os.environ:
     SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 elif DEBUG:
     SECRET_KEY = "django-insecure-fltxttvuzimm-^(2ugt$+8pxe_b287a(kv1_fy=$n@6m=e@c%4"
 
-ALLOWED_HOSTS = [os.environ["DJANGO_HOST_WEB"], "localhost","127.0.0.1"]
+if "DJANGO_HOST_WEB" in os.environ:
+    ALLOWED_HOSTS = [os.environ["DJANGO_HOST_WEB"], "localhost","127.0.0.1"]
+else:
+    ALLOWED_HOSTS = ["localhost","127.0.0.1"]
 
 
 # Application definition
@@ -83,7 +90,7 @@ WSGI_APPLICATION = "web.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 
-if "test" in sys.argv:
+if "test" in sys.argv or DEBUG is True:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -114,11 +121,13 @@ if not DEBUG:
     )
     STATIC_ROOT = os.environ["DJANGO_STATIC_ROOT"]
 else:
+    if "DJANGO_HOST_STATIC_CONTENT" in os.environ:
+        STATIC_URL = os.environ["DJANGO_HOST_STATIC_CONTENT"] + "/" + "static/"
+        STATIC_ROOT = BASE_DIR.as_posix() + "/web/static"
 
-    STATIC_URL = os.environ["DJANGO_HOST_STATIC_CONTENT"] + "/" + "static/"
-    STATIC_ROOT = BASE_DIR.as_posix() + "/web/static"
-
-    TEST_ADDRESS = os.environ["DJANGO_TEST_ADDRESS"]  # "http://127.0.0.1:8080"
+        TEST_ADDRESS = os.environ["DJANGO_TEST_ADDRESS"]  # "http://127.0.0.1:8080"
+    else:
+        STATIC_URL = "static/"
 
 
 # Password validation
