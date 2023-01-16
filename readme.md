@@ -26,7 +26,7 @@ enjoy.
 
 # containers
 
-docker network create general-network
+docker compose up --build
 
 
 # filling
