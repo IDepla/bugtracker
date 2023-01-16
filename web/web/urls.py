@@ -21,7 +21,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from .views import Landingpage, OpenBugs, BugDetail, AccountPage
 
 urlpatterns = api_urlpatterns+[
-    path("admin/", admin.site.urls, name="adminsite"),
+    path("admin/", admin.site.urls),
     path("open/", OpenBugs.as_view(), name="open-bugs"),
     path("bug/<id>/", BugDetail.as_view(), name="bug-detail"),
     path("account/", AccountPage.as_view(), name="account-page"),

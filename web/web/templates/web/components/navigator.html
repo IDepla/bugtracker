@@ -16,6 +16,13 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'swagger-ui' %}" target="_blank">API</a>
           </li>
+
+          {% if user.is_superuser %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">admin site</a>
+          </li>
+          {% endif %}
+
           <li class="nav-item">
             <a class="nav-link" href="{% url 'logout' %}">logout</a>
           </li>
