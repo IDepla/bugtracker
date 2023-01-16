@@ -16,7 +16,7 @@ Strategy draft:
 
 - databases: the system actions are simple, any db would be ok. Option is to use sqlite for development and move to postgres for deployment. Given the expected actions, there is no incompatibility.
 
-- containers: two environment, development and deployment. development could also be dropped and just use localhost and sqlite. I'm working alone and I'm not planning to have other developers.
+- containers: two environment, development and deployment. development could also be dropped and just use localhost and sqlite. 
 
 - testing plan: 
 we drop the structural testing for the front-end, that's kept as a technical debt. 

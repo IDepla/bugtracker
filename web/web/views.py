@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from datetime import datetime
 
+
 class Landingpage(TemplateView):
     """Landing page, shows login, or redirects to open bugs"""
 
@@ -51,14 +52,15 @@ class OpenBugs(LoginRequiredMixin, TemplateView):
 
 class CreateBug(LoginRequiredMixin, CreateView):
     """create a bug"""
+
     model = Bug
     fields = ["title", "description", "assigned_to"]
 
     def get_success_url(self):
-        return reverse('bug-detail', kwargs={'pk': self.object.pk})
+        return reverse("bug-detail", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
-        
+
         self.object = form.save(commit=False)
         self.object.created_by = self.request.user
         self.object.save()
@@ -68,6 +70,7 @@ class CreateBug(LoginRequiredMixin, CreateView):
 
 class CloseBug(LoginRequiredMixin, View):
     """closes a bug and renders to the open bugs page"""
+
     model = Bug
 
     def get(self, request, *args, **kwargs):
@@ -78,9 +81,8 @@ class CloseBug(LoginRequiredMixin, View):
         bug.closed_at = datetime.now()
         bug.save()
 
-        #return redirect(reverse("bug-detail", kwargs={"pk": self.kwargs["pk"]}))
+        # return redirect(reverse("bug-detail", kwargs={"pk": self.kwargs["pk"]}))
         return redirect(reverse("open-bugs"))
-
 
 
 class BugDetail(LoginRequiredMixin, DetailView, UpdateView):
@@ -88,16 +90,17 @@ class BugDetail(LoginRequiredMixin, DetailView, UpdateView):
 
     model = Bug
     template_name = "web/bug-detail.html"
-    fields = ["title","description","assigned_to"]
+    fields = ["title", "description", "assigned_to"]
 
     def get_success_url(self):
-        return reverse('bug-detail', kwargs={'pk': self.object.pk})
+        return reverse("bug-detail", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
         if self.object.status == Bug.BugStatus.OPEN:
             self.object = form.save(commit=True)
-            
+
         return HttpResponseRedirect(self.get_success_url())
+
 
 class AccountPage(LoginRequiredMixin, DetailView, View):
     """user account page"""
@@ -105,8 +108,7 @@ class AccountPage(LoginRequiredMixin, DetailView, View):
     model = User
     template_name = "web/account-page.html"
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
+    def get_context_data(self, **kwargs):   
         context = super().get_context_data(**kwargs)
 
         user = User.get_complete(self.kwargs["pk"])
@@ -116,7 +118,6 @@ class AccountPage(LoginRequiredMixin, DetailView, View):
             form.fields["first_name"].initial = user.first_name
             form.fields["last_name"].initial = user.last_name
             context["form"] = form
-        # Add in a QuerySet of all the books
         context["assigned_bugs_list"] = user.bugs_assigned.all()
         context["created_bugs_list"] = user.bugs_created.all()
         context["user"] = user
