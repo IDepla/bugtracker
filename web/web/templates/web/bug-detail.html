@@ -7,21 +7,37 @@
 <div class="container">
     <h3>Bug #{{ bug.pk }} ({{ bug.get_status_display }})</h3>
     <div class="row">
-        <div class="col-6"> open since {{ bug.created_at }}, by <a href="{% url 'account-detail' bug.created_by.pk %}">{{ bug.created_by }}</a></div>
+        <div class="col-6"> opened since {{ bug.created_at }} author <a href="{% url 'account-detail' bug.created_by.pk %}">{{ bug.created_by }}</a></div>
         {% if bug.status == 'C' %}
-        <div class="col-6"> closed at {{ bug.closed_at }}, by <a href="{% url 'account-detail' bug.closed_by.pk %}">{{ bug.closed_by }}</a> </div>
+        <div class="col-6"> closed at {{ bug.closed_at }} by {% if bug.closed_by %}<a href="{% url 'account-detail' bug.closed_by.pk %}">{{ bug.closed_by }}</a> {% else %} unknown {% endif %}</div>
         {% else %}
         <div class="col-6">
         <a  href="{% url 'bug-close' bug.pk %}">close</a>
         </div>
         {% endif %}
     </div>
-
+    {% if bug.status == 'O' %}
     <form class="bug-form" method="post">
         {% csrf_token %}
         {{ form.as_div }}
     <input type="submit" value="update"/>
     </form>
+    {% else %}
+     <div class="row">
+        <span class="col-1"> Title:</span> <div class="col">{{ bug.title }}</div>
+     </div>
+     <div class="row">
+        <span class="col-1"> Description:</span> <div class="col">{{ bug.description }}</div>
+     </div>
+     <div class="row">
+        <span class="col-2">Assigned to:</span> 
+        {% for assigned in bug.assigned_to.all %}
+        <a href="{% url 'account-detail' assigned.pk %}">{{ assigned }}</a>
+        {% empty %}
+        NONE!
+        {% endfor %}
+     </div>
+    {% endif %}
 
 </div>
 {% endblock %}

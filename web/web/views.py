@@ -82,6 +82,7 @@ class CloseBug(LoginRequiredMixin, View):
         return redirect(reverse("open-bugs"))
 
 
+
 class BugDetail(LoginRequiredMixin, DetailView, UpdateView):
     """bug page, with all details."""
 
@@ -89,6 +90,14 @@ class BugDetail(LoginRequiredMixin, DetailView, UpdateView):
     template_name = "web/bug-detail.html"
     fields = ["title","description","assigned_to"]
 
+    def get_success_url(self):
+        return reverse('bug-detail', kwargs={'pk': self.object.pk})
+
+    def form_valid(self, form):
+        if self.object.status == Bug.BugStatus.OPEN:
+            self.object = form.save(commit=True)
+            
+        return HttpResponseRedirect(self.get_success_url())
 
 class AccountPage(LoginRequiredMixin, DetailView, View):
     """user account page"""

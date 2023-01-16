@@ -2,7 +2,7 @@
 {% block main %}
 
 <h3>create bug</h3>
-<form method="post">
+<form class="bug-form" method="post">
     {% csrf_token %}
 {{ form.as_div }}
 <input type="submit" value="create"/>

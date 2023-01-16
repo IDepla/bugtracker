@@ -5,6 +5,7 @@
 {% block main %}
 <h3>Account {{ user.username }}</h3>
 
+<div class="row p-3">
 {% if form %}
 <form method="post">
     {% csrf_token %}
@@ -14,7 +15,7 @@
 {% else %}
 <span>{{ user.first_name }}</span> <span>{{ user.last_name }}</span>
 {% endif %}
-
+</div>
 <div class="row p-3">
 
     <div class="col">
