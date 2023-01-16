@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from typing import List
 
 
-
 class UserManager(BaseUserManager):
     """Define a model manager for User model with optional username field."""
 
@@ -36,6 +35,8 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self._create_user(email, password, **extra_fields)
+
+
 class User(AbstractUser):
     """System user"""
 
