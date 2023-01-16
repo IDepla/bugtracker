@@ -146,3 +146,7 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
+
+LOGIN_REDIRECT_URL = "/open/"
+LOGIN_URL = "/account/login/"
+LOGOUT_REDIRECT_URL = "/"
