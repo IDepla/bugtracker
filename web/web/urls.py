@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from api.urls import urlpatterns as api_urlpatterns
 
 from .views import Landingpage, OpenBugs, BugDetail, AccountPage
 
-urlpatterns = [
+urlpatterns = api_urlpatterns+[
     path("admin/", admin.site.urls),
     path("open/", OpenBugs.as_view()),
     path("bug/<id>/", BugDetail.as_view()),
