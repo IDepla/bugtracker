@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'drf_spectacular',
     'api',
+    'web',
 ]
 
 MIDDLEWARE = [
@@ -125,6 +126,8 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "web.User"
 
 REST_FRAMEWORK = {
     # YOUR SETTINGS

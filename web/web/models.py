@@ -31,7 +31,11 @@ class Bug(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(
+        User,
+        related_name="bugs_created",
+        on_delete=models.DO_NOTHING,
+    )
 
     status = models.CharField(
         max_length=1,
@@ -40,6 +44,11 @@ class Bug(models.Model):
     )
 
     closed_at = models.DateTimeField(null=True)
-    closed_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    closed_by = models.ForeignKey(
+        User, related_name="bugs_closed", on_delete=models.DO_NOTHING
+    )
 
-    assigned_to = models.ManyToManyField(User)
+    assigned_to = models.ManyToManyField(
+        User,
+        related_name="bugs_assigned",
+    )
