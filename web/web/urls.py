@@ -16,6 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from .views import Landingpage, OpenBugs, BugDetail, AccountPage
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("open/", OpenBugs.as_view()),
+    path("bug/<id>/", BugDetail.as_view()),
+    path("account/", AccountPage.as_view()),
+    path("", Landingpage.as_view()),
 ]
