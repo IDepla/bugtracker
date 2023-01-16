@@ -2,26 +2,33 @@
 
 Build a simple bug tracker
 
-# entities
-- bug
-- user
 
 
-# features
+options:
+- localhost using the django server
+- on container with compose
 
-- list open bugs
-- detail page bug
-- crud bug
-- assign bug
-- add people
-- detail account
+# localhost
+1) create a virtual environment
+
+2) python3 -m pip install requirements.txt
+
+create a superuser account:
+
+python3 -m manage.py createsuperuser
 
 
-- api 
+login 
 
-# artifacts
 
-- list bugs + add bug button + assign/close action
-- detail bug + modify?
-- openapi
-- account details and modify
+enjoy.
+
+
+# containers
+
+docker network create general-network
+
+
+# filling
+
+you can use the api

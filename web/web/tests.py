@@ -11,8 +11,8 @@ class CreateBugTest(TestCase):
     def setUp(self) -> None:
         self.factory = RequestFactory()
         self.user = User.objects.create_user(
-            email="jacob@example.com",
-            password="top_secret",
+            email="test@example.com",
+            password="secret",
         )
         return super().setUp()
 

@@ -18,6 +18,7 @@ from django.urls import path
 from api.urls import urlpatterns as api_urlpatterns
 from django.contrib.auth.views import LoginView, LogoutView
 
+
 from .views import (
     Landingpage,
     OpenBugs,

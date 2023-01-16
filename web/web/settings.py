@@ -9,23 +9,25 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = os.environ["DJANGO_APPLICATION_DEBUG"] == "True" or True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-fltxttvuzimm-^(2ugt$+8pxe_b287a(kv1_fy=$n@6m=e@c%4"
+if os.environ["DJANGO_SECRET_KEY"]:
+    SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+elif DEBUG:
+    SECRET_KEY = "django-insecure-fltxttvuzimm-^(2ugt$+8pxe_b287a(kv1_fy=$n@6m=e@c%4"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["localhost","127.0.0.1"]
+ALLOWED_HOSTS = [os.environ["DJANGO_HOST_WEB"], "localhost","127.0.0.1"]
 
 
 # Application definition
@@ -80,12 +82,43 @@ WSGI_APPLICATION = "web.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+
+else:
+    # postgis
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ["POSTGRESQL_DATABASE"],
+            "USER": os.environ["POSTGRESQL_USER"],
+            "PASSWORD": os.environ["POSTGRESQL_PASSWORD"],
+            "HOST": os.environ["POSTGRESQL_HOST"],
+            "PORT": os.environ["POSTGRESQL_PORT"],
+        },
+    }
+
+
+if not DEBUG:
+    # STATIC_ROOT = BASE_DIR.as_posix() + "web/static"
+    STATIC_URL = (
+        os.environ["DJANGO_HOST_STATIC_CONTENT"]
+        + "/"
+        + os.environ["DJANGO_STATIC_DIRECTORY"]
+    )
+    STATIC_ROOT = os.environ["DJANGO_STATIC_ROOT"]
+else:
+
+    STATIC_URL = os.environ["DJANGO_HOST_STATIC_CONTENT"] + "/" + "static/"
+    STATIC_ROOT = BASE_DIR.as_posix() + "/web/static"
+
+    TEST_ADDRESS = os.environ["DJANGO_TEST_ADDRESS"]  # "http://127.0.0.1:8080"
 
 
 # Password validation

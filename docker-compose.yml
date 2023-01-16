@@ -1,0 +1,114 @@
+x-environment_django:
+  &environment_django
+  DJANGO_APPLICATION_DEBUG: ${DJANGO_APPLICATION_DEBUG:-False} # True False
+  DJANGO_TEST_ADDRESS: ${DJANGO_TEST_ADDRESS:-localhost}
+  DJANGO_HOST_WEB: ${DJANGO_HOST_WEB:-localhost}
+  DJANGO_HOST_STATIC_CONTENT: ${DJANGO_HOST_STATIC_CONTENT:-http://localhost}
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-localhost12344}
+  DJANGO_STATIC_ROOT: ${DJANGO_STATIC_ROOT:-/app/web/static/}
+  DJANGO_STATIC_DIRECTORY: ${DJANGO_STATIC_DIRECTORY:-/static/}
+  DJANGO_USE_TZ: "True"
+  DJANGO_USE_L10N: "True"
+  DJANGO_USE_I18N: "True"
+  DJANGO_TIME_ZONE: 'UTC'
+  DJANGO_LANGUAGE_CODE: 'en-gb'
+  POSTGRESQL_DATABASE: ${POSTGRESQL_DATABASE:-postgres}
+  POSTGRESQL_USER: ${POSTGRESQL_USER:-postgres}
+  POSTGRESQL_PASSWORD: ${POSTGRESQL_PASSWORD:-postgres}
+  POSTGRESQL_HOST: ${POSTGRESQL_HOST:-postgres}
+  POSTGRESQL_PORT: ${POSTGRESQL_PORT:-5432}
+
+x-healthcheck-common:
+  &healthcheck-common
+  interval: 1m30s
+  timeout: 30s
+  retries: 50
+
+x-common-django:
+  &common-django
+  image: web-bugtracker
+  build:
+    context: ./web/
+    dockerfile: Dockerfile
+  working_dir: /app
+  networks:
+    - general-network2
+  restart: on-failure:10
+
+services:
+
+  postgres:
+    image: "postgres:14.3-alpine"
+    expose:
+      - 5432
+    #restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - "./postgresql/init/:/docker-entrypoint-initdb.d/"
+      - postgres-data-2:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      retries: 5
+    networks:
+      - general-network2
+    restart: unless-stopped
+    
+  migrate-database-service-bugtracker:
+    container_name: database-migration-bugtracker
+    <<: *common-django
+    volumes:
+      - ./web/:/app/
+    environment:
+      <<: *environment_django
+    command: >
+      bash -c "
+        python3 manage.py makemigrations --noinput
+        python3 manage.py migrate --noinput
+      "
+
+  web-bugtracker:
+    <<: *common-django
+    container_name: web-bugtracker
+    expose:
+      - "80"
+    ports:
+      - "8000:80"
+    environment:
+      <<: *environment_django
+      DJANGO_STATIC_ROOT: ${DJANGO_STATIC_ROOT:-/app/static/}
+    depends_on:
+      #static-migration:
+      #  condition: service_completed_successfully
+      migrate-database-service-bugtracker:
+        condition: service_completed_successfully
+    healthcheck:
+      <<: *healthcheck-common
+      test:
+        [
+          "CMD",
+          "gunicorn",
+          "web.wsgi:application",
+          "--check-config"
+        ]
+    command:
+      [
+        "gunicorn",
+        "web.wsgi:application",
+        "-w",
+        "2",
+        "--threads",
+        "3",
+        "-b",
+        "0.0.0.0:80"
+      ]
+
+
+volumes:
+  postgres-data-2:
+
+
+networks:
+  general-network2:
